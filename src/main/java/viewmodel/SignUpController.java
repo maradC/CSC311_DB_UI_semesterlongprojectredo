@@ -13,6 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.MyLogger;
 import service.UserSession;
+
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +39,7 @@ public class SignUpController {
     @FXML
     private Button newAccountBtn;
 
-
+    @FXML
     public void createNewAccount(ActionEvent actionEvent) {
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -51,28 +53,31 @@ public class SignUpController {
         if (password.length() < 6) {
             showAlert(Alert.AlertType.ERROR, "Password Error", "Password must be at least 6 characters.");
             return;
-
         }
         if (!isValidEmail(email)) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter your email address.");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
             return;
         }
 
         try {
+            Preferences prefs = Preferences.userRoot();
+            prefs.put("USERNAME", email);
+            prefs.put("PASSWORD", password);
+
+            // Log the creation
             UserSession us = UserSession.getInstance(email, password, "USER");
             MyLogger.makeLog("New account created - Username: " + us.getUserName() + ", Email: " + us.getPassword() + ", Privileges: " + us.getPrivileges());
 
             showAlert(Alert.AlertType.INFORMATION, "Account Created", "Account created successfully!");
-
             clearFields();
+
             goBack(actionEvent);
 
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Account Creation Failed", "An error occurred while creating the account. Please try again.");
         }
-
-
     }
+
 
     private void clearFields() {
         firstName.clear();
