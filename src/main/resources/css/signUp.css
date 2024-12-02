@@ -1,18 +1,8 @@
-/* signUp.css */
-
-/* Background image for the GridPane */
-.grid_pane {
-    -fx-background-image: url("/images/Estadio.jpg");  /* Path to your image */
-    -fx-background-size: cover;
-    -fx-background-position: center;
-}
-/* Style for the ImageView */
 .image-view {
     -fx-border-color: black;
     -fx-border-width: 2px;
-    -fx-padding: 5px;  /* Adds padding around the image */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.5, 0, 0); /* Glow effect */
-    -fx-background-image: url("/images/Estadio.jpg");  /* You can add a background image if needed */
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.5, 0, 0);
     -fx-background-size: cover;
     -fx-background-position: center;
 }

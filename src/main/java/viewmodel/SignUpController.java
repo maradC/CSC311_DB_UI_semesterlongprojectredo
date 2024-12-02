@@ -1,14 +1,23 @@
 package viewmodel;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 public class SignUpController {
+        @FXML
+        private Button goBackBtn;
+
+        @FXML
+        private Button newAccountBtn;
+
+
     public void createNewAccount(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText("Info for the user. Message goes here");
