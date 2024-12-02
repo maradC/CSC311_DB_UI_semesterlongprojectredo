@@ -160,13 +160,11 @@ public class DB_GUI_Controller implements Initializable {
                 updatedImageURL
         );
         try {
-            // Update the database with the new data (no return value to check)
             cnUtil.editUser(selectedPerson.getId(), updatedPerson);
 
-            // Update the TableView with the new data
             int index = tv.getSelectionModel().getSelectedIndex();
-            data.set(index, updatedPerson); // Replace the old data with the updated data
-            tv.getSelectionModel().select(index); // Re-select the updated item
+            data.set(index, updatedPerson);
+            tv.getSelectionModel().select(index);
 
             // Log the update
             MyLogger.makeLog("User updated: " + updatedPerson.getFirstName() + " " + updatedPerson.getLastName());
@@ -177,11 +175,19 @@ public class DB_GUI_Controller implements Initializable {
             clearForm();
 
         } catch (Exception e) {
-            // If there was an exception (e.g., database issue), show an error message
             showAlert(Alert.AlertType.ERROR, "Update Failed", "An error occurred while updating the user details.");
-            e.printStackTrace(); // You may want to log this error for debugging purposes
+            e.printStackTrace();
         }
     }
+    private void updateStatusMessage(String message) {
+        statusMessageLabel.setText(message);  // Set the message to the statusMessageLabel
+        statusMessageLabel.setStyle("-fx-text-fill: green;");  // Optional: set text color to green for success
+    }
+    private void updateErrorStatusMessage(String message) {
+        statusMessageLabel.setText(message);  // Set the message to the statusMessageLabel
+        statusMessageLabel.setStyle("-fx-text-fill: red;");  // Set text color to red for errors
+    }
+
 
 
     private void showAlert(Alert.AlertType alertType, String noSelection, String s) {
