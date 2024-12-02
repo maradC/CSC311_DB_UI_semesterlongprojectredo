@@ -66,7 +66,7 @@ public class SignUpController {
 
             // Log the creation
             UserSession us = UserSession.getInstance(email, password, "USER");
-            MyLogger.makeLog("New account created - Username: " + us.getUserName() + ", Email: " + us.getPassword() + ", Privileges: " + us.getPrivileges());
+            MyLogger.makeLog("New account created - Username: " + us.getUserName() + ", Email: " + us.getUserName() + ", Privileges: " + us.getPrivileges());
 
             showAlert(Alert.AlertType.INFORMATION, "Account Created", "Account created successfully!");
             clearFields();

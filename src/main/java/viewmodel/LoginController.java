@@ -13,10 +13,10 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-
+import java.util.prefs.Preferences;
 
 public class LoginController {
+
     @FXML
     private Button loginBtn;
 
@@ -63,32 +63,38 @@ public class LoginController {
             showAlert(Alert.AlertType.ERROR, "Login Error"," Both username and password must be filled out.");
             return;
         }
+        Preferences prefs = Preferences.userRoot();
+        String savedUsername = prefs.get("USERNAME", "");
+        String savedPassword = prefs.get("PASSWORD", "");
 
+        // Validate the login credentials
+        if (validateCredentials(username, password, savedUsername, savedPassword)) {
+            showAlert(Alert.AlertType.INFORMATION, "Login Success", "You have logged in successfully!");
 
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/db_interface_gui.fxml"));
-            Scene scene = new Scene(root, 900, 600);
-            scene.getStylesheets().add(getClass().getResource("/css/lightTheme.css").toExternalForm());
-            Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            window.setScene(scene);
-            window.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("/view/db_interface_gui.fxml"));
+                Scene scene = new Scene(root, 900, 600);
+                scene.getStylesheets().add(getClass().getResource("/css/lightTheme.css").toExternalForm());
+                Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                window.setScene(scene);
+                window.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid username or password.");
         }
     }
-    private boolean validateCredentials(String username, String password) {
-        // Dummy validation for demonstration purposes
-        // Replace this with actual database or user management logic
-        return username.equals("admin") && password.equals("password123");
+    private boolean validateCredentials(String username, String password, String savedUsername, String savedPassword) {
+        return username.equals(savedUsername) && password.equals(savedPassword);
     }
 
-    private void showAlert(Alert.AlertType alertType, String validationError, String s){
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
-        alert.setTitle(validationError);
-        alert.setContentText(s);
+        alert.setTitle(title);
+        alert.setContentText(message);
         alert.showAndWait();
     }
-
 
     public void signUp(ActionEvent actionEvent) {
         try {
@@ -102,6 +108,4 @@ public class LoginController {
             e.printStackTrace();
         }
     }
-
-
 }

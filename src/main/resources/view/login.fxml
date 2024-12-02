@@ -47,13 +47,13 @@
         </HBox>
         <VBox alignment="CENTER" fillWidth="false" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
-                <TextField id="emailTextField" fx:id="usernameTextField" prefHeight="28.0" prefWidth="400.0" promptText="email_id@domain.edu" style="-fx-border-color: BLACK;" styleClass="login_text_field" />
+                <TextField id="emailTextField" fx:id="usernameTextField" prefHeight="28.0" prefWidth="400.0" promptText="email_id@farmingdale.edu" style="-fx-border-color: BLACK;" styleClass="login_text_field" />
          </children>
         </VBox>
         <VBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3" />
         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
-                <PasswordField fx:id="passwordField" style="-fx-border-color: BLACK;" styleClass="login_password_field" />
+                <PasswordField fx:id="passwordField" promptText="password" style="-fx-border-color: BLACK;" styleClass="login_password_field" />
          </children>
         </VBox>
         <VBox alignment="CENTER" prefHeight="601.0" prefWidth="723.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
