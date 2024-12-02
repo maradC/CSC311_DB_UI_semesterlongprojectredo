@@ -48,8 +48,39 @@ public class SignUpController {
             showAlert(Alert.AlertType.ERROR, "Password Error", "Password must be at least 6 characters.");
 
         }
+        if (!isValidEmail(email)) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
+            return;
+        }
+        if (!password.equals(confirmPassword)) {
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Passwords do not match.");
+            return;
+        }
+
+        try {
+            UserSession userSession = UserSession.getInstance(email, password, "USER");
+            showAlert(Alert.AlertType.INFORMATION, "Account Created", "Account created successfully!");
+            clearFields();
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Account Creation Failed", "An error occurred while creating the account. Please try again.");
+        }
+
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("Info for the user. Message goes here");
+        alert.showAndWait();
+    }
+
+    private void clearFields() {
+        firstName.clear();
+        lastName.clear();
+        emailField.clear();
+        passwordField.clear();
 
     }
+
+
     private void showAlert (Alert.AlertType alertType, String validationError, String s){
         Alert alert = new Alert(alertType);
         alert.setTitle(validationError);
