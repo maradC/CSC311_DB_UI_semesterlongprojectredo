@@ -4,6 +4,8 @@ import java.util.prefs.Preferences;
 
 public class UserSession {
 
+    private static UserSession instance;
+
     private String userName;
     private String password;
     private String privileges;
@@ -13,27 +15,34 @@ public class UserSession {
         this.password = password;
         this.privileges = privileges;
 
-        Preferences userPreferences = Preferences.userRoot();
+        Preferences userPreferences = Preferences.userRoot().node(this.getClass().getName());
         userPreferences.put("USERNAME", userName);
         userPreferences.put("PASSWORD", password);
         userPreferences.put("PRIVILEGES", privileges);
     }
 
-    // Inner static class responsible for holding the Singleton instance
-    private static class UserSessionHolder {
-        private static final UserSession INSTANCE = new UserSession(
-                Preferences.userRoot().get("USERNAME", ""),
-                Preferences.userRoot().get("PASSWORD", ""),
-                Preferences.userRoot().get("PRIVILEGES", "NONE")
-        );
-    }
-
     public static UserSession getInstance(String userName, String password, String privileges) {
-        return new UserSession(userName, password, privileges);
+        if (instance == null) {
+            instance = new UserSession(userName, password, privileges);
+        }
+        return instance;
     }
 
-    public static UserSession getInstance() {
-        return UserSessionHolder.INSTANCE;
+    public static UserSession getInstance(String userName, String password) {
+        if (instance == null) {
+            instance = new UserSession(userName, password, "USER");
+        }
+        return instance;
+    }
+
+    public static String getSavedUsername() {
+        Preferences userPreferences = Preferences.userRoot().node(UserSession.class.getName());
+        return userPreferences.get("USERNAME", null);  // Return null if not found
+    }
+
+    public static String getSavedPassword() {
+        Preferences userPreferences = Preferences.userRoot().node(UserSession.class.getName());
+        return userPreferences.get("PASSWORD", null);  // Return null if not found
     }
 
     public String getUserName() {
@@ -58,7 +67,7 @@ public class UserSession {
     public String toString() {
         return "UserSession{" +
                 "userName='" + this.userName + '\'' +
-                ", privileges='" + this.privileges + '\'' +
+                ", privileges=" + this.privileges +
                 '}';
     }
 }

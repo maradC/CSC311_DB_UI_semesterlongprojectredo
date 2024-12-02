@@ -8,10 +8,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -62,6 +59,12 @@ public class LoginController {
         String username = usernameTextField.getText();
         String password = passwordField.getText();
 
+        if(username.isEmpty() || password.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Login Error"," Both username and password must be filled out.");
+            return;
+        }
+
+
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/view/db_interface_gui.fxml"));
             Scene scene = new Scene(root, 900, 600);
@@ -72,6 +75,18 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    private boolean validateCredentials(String username, String password) {
+        // Dummy validation for demonstration purposes
+        // Replace this with actual database or user management logic
+        return username.equals("admin") && password.equals("password123");
+    }
+
+    private void showAlert(Alert.AlertType alertType, String validationError, String s){
+        Alert alert = new Alert(alertType);
+        alert.setTitle(validationError);
+        alert.setContentText(s);
+        alert.showAndWait();
     }
 
 
