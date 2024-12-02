@@ -37,7 +37,7 @@
                 <Insets />
             </GridPane.margin>
             <children>
-                <Label alignment="CENTER" prefHeight="114.0" prefWidth="1362.0" style="-fx-border-color: BLACK;" styleClass="login_title" text="STUDENT REGISTRATION&#10;" textAlignment="CENTER" textFill="#111386" wrapText="true">
+                <Label alignment="CENTER" prefHeight="114.0" prefWidth="1362.0" style="-fx-border-color: BLACK;" styleClass="login_title" text="Soccer Registration&#10;" textAlignment="CENTER" textFill="#111386" wrapText="true">
                     <font>
                         <Font name="System Bold" size="51.0" />
                     </font>

@@ -13,7 +13,7 @@
    <children>
       <ImageView fitHeight="316.0" fitWidth="459.0" pickOnBounds="true" preserveRatio="true"  >
        <image>
-                <Image url="@../images/fsclogo.png" />
+                <Image url="@../images/logo.png" />
        </image>
       </ImageView>
    </children>
