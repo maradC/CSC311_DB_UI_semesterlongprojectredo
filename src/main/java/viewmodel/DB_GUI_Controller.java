@@ -140,9 +140,10 @@ public class DB_GUI_Controller implements Initializable {
         Person selectedPerson = tv.getSelectionModel().getSelectedItem();
 
         if (selectedPerson == null) {
-            showAlert(Alert.AlertType.ERROR, "No Selection", "No user is selected for editing.");
+            updateErrorStatusMessage("No user is selected for editing.");
             return;
         }
+
         String updatedFirstName = first_name.getText();
         String updatedLastName = last_name.getText();
         String updatedDepartment = department.getText();
@@ -159,26 +160,32 @@ public class DB_GUI_Controller implements Initializable {
                 updatedEmail,
                 updatedImageURL
         );
+
         try {
+            // Perform the update operation in the database
             cnUtil.editUser(selectedPerson.getId(), updatedPerson);
 
+            // If no exception was thrown, assume update is successful
             int index = tv.getSelectionModel().getSelectedIndex();
-            data.set(index, updatedPerson);
-            tv.getSelectionModel().select(index);
+            data.set(index, updatedPerson);  // Update the table data
+            tv.getSelectionModel().select(index);  // Keep the selection on the updated row
 
-            // Log the update
+            // Log the update operation
             MyLogger.makeLog("User updated: " + updatedPerson.getFirstName() + " " + updatedPerson.getLastName());
 
             // Show success message
-            showAlert(Alert.AlertType.INFORMATION, "Update Successful", "User details have been updated.");
+            updateStatusMessage("User updated successfully!");
 
+            // Clear the form fields
             clearForm();
-
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Update Failed", "An error occurred while updating the user details.");
+            // If an exception occurs, update the status message with an error
+            updateErrorStatusMessage("An error occurred while updating the user details.");
             e.printStackTrace();
         }
     }
+
+
     private void updateStatusMessage(String message) {
         statusMessageLabel.setText(message);  // Set the message to the statusMessageLabel
         statusMessageLabel.setStyle("-fx-text-fill: green;");  // Optional: set text color to green for success
