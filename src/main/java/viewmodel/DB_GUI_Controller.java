@@ -78,6 +78,8 @@ public class DB_GUI_Controller implements Initializable {
             throw new RuntimeException(e);
         }
         editBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
+        delBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
+
 
     }
 
@@ -176,7 +178,6 @@ public class DB_GUI_Controller implements Initializable {
             // Show success message
             updateStatusMessage("User updated successfully!");
 
-            // Clear the form fields
             clearForm();
         } catch (Exception e) {
             // If an exception occurs, update the status message with an error
@@ -206,11 +207,36 @@ public class DB_GUI_Controller implements Initializable {
 
     @FXML
     protected void deleteRecord() {
-        Person p = tv.getSelectionModel().getSelectedItem();
-        int index = data.indexOf(p);
-        cnUtil.deleteRecord(p);
-        data.remove(index);
-        tv.getSelectionModel().select(index);
+        Person selectedPerson = tv.getSelectionModel().getSelectedItem();
+
+        if (selectedPerson == null) {
+            MyLogger.makeLog("ERROR: No user selected for deletion.");
+            updateErrorStatusMessage("No user is selected for deletion.");
+            return;
+        }
+
+        int selectedIndex = tv.getSelectionModel().getSelectedIndex();
+
+        try {
+            MyLogger.makeLog("Attempting to delete user: " + selectedPerson.getFirstName() + " " + selectedPerson.getLastName() + " | ID: " + selectedPerson.getId());
+            cnUtil.deleteRecord(selectedPerson);
+
+            data.remove(selectedIndex);
+            tv.getSelectionModel().clearSelection();
+
+            MyLogger.makeLog("Successfully deleted user: " + selectedPerson.getFirstName() + " " + selectedPerson.getLastName() + " | ID: " + selectedPerson.getId());
+            updateStatusMessage("User deleted successfully!");
+
+            if (data.isEmpty()) {
+                delBtn.setDisable(true);
+            }
+            clearForm();
+
+        } catch (Exception e) {
+            MyLogger.makeLog("ERROR: Failed to delete user. Exception: " + e.getMessage());
+            updateErrorStatusMessage("An error occurred while deleting the user.");
+            e.printStackTrace();
+        }
     }
 
     @FXML
