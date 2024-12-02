@@ -35,6 +35,12 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DB_GUI_Controller implements Initializable {
+    @FXML
+    public Label statusMessageLabel;
+    public Button clearBtn;
+    public Button addBtn;
+    public Button delBtn;
+    public Button editBtn;
 
     @FXML
     TextField first_name, last_name, department, major, email, imageURL;
@@ -48,8 +54,13 @@ public class DB_GUI_Controller implements Initializable {
     private TableColumn<Person, Integer> tv_id;
     @FXML
     private TableColumn<Person, String> tv_fn, tv_ln, tv_department, tv_major, tv_email;
+
+    @FXML
+    private ProgressBar progressBar;
+
     private final DbConnectivityClass cnUtil = new DbConnectivityClass();
     private final ObservableList<Person> data = cnUtil.getData();
+
 
     StorageUploader store = new StorageUploader();
 
@@ -66,11 +77,12 @@ public class DB_GUI_Controller implements Initializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        editBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
+
     }
 
     @FXML
     protected void addNewRecord() {
-
             Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
                     major.getText(), email.getText(), imageURL.getText());
             cnUtil.insertUser(p);
@@ -125,14 +137,58 @@ public class DB_GUI_Controller implements Initializable {
 
     @FXML
     protected void editRecord() {
-        Person p = tv.getSelectionModel().getSelectedItem();
-        int index = data.indexOf(p);
-        Person p2 = new Person(index + 1, first_name.getText(), last_name.getText(), department.getText(),
-                major.getText(), email.getText(),  imageURL.getText());
-        cnUtil.editUser(p.getId(), p2);
-        data.remove(p);
-        data.add(index, p2);
-        tv.getSelectionModel().select(index);
+        Person selectedPerson = tv.getSelectionModel().getSelectedItem();
+
+        if (selectedPerson == null) {
+            showAlert(Alert.AlertType.ERROR, "No Selection", "No user is selected for editing.");
+            return;
+        }
+        String updatedFirstName = first_name.getText();
+        String updatedLastName = last_name.getText();
+        String updatedDepartment = department.getText();
+        String updatedMajor = major.getText();
+        String updatedEmail = email.getText();
+        String updatedImageURL = imageURL.getText();
+
+        Person updatedPerson = new Person(
+                selectedPerson.getId(),
+                updatedFirstName,
+                updatedLastName,
+                updatedDepartment,
+                updatedMajor,
+                updatedEmail,
+                updatedImageURL
+        );
+        try {
+            // Update the database with the new data (no return value to check)
+            cnUtil.editUser(selectedPerson.getId(), updatedPerson);
+
+            // Update the TableView with the new data
+            int index = tv.getSelectionModel().getSelectedIndex();
+            data.set(index, updatedPerson); // Replace the old data with the updated data
+            tv.getSelectionModel().select(index); // Re-select the updated item
+
+            // Log the update
+            MyLogger.makeLog("User updated: " + updatedPerson.getFirstName() + " " + updatedPerson.getLastName());
+
+            // Show success message
+            showAlert(Alert.AlertType.INFORMATION, "Update Successful", "User details have been updated.");
+
+            clearForm();
+
+        } catch (Exception e) {
+            // If there was an exception (e.g., database issue), show an error message
+            showAlert(Alert.AlertType.ERROR, "Update Failed", "An error occurred while updating the user details.");
+            e.printStackTrace(); // You may want to log this error for debugging purposes
+        }
+    }
+
+
+    private void showAlert(Alert.AlertType alertType, String noSelection, String s) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(noSelection);
+        alert.setContentText(s);
+        alert.showAndWait();
     }
 
     @FXML
