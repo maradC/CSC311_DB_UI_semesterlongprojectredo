@@ -49,10 +49,11 @@ public class SignUpController {
         }
         if (password.length() < 6) {
             showAlert(Alert.AlertType.ERROR, "Password Error", "Password must be at least 6 characters.");
+            return;
 
         }
         if (!isValidEmail(email)) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
+            showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter your email address.");
             return;
         }
 
@@ -65,10 +66,6 @@ public class SignUpController {
             showAlert(Alert.AlertType.ERROR, "Account Creation Failed", "An error occurred while creating the account. Please try again.");
         }
 
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("Info for the user. Message goes here");
-        alert.showAndWait();
     }
 
     private void clearFields() {
@@ -79,7 +76,7 @@ public class SignUpController {
 
     }
     private boolean isValidEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$"; // Simple regex for email validation
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(farmingdale.edu)$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();

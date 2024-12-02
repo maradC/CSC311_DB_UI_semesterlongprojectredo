@@ -8,6 +8,10 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -16,20 +20,31 @@ import javafx.util.Duration;
 
 
 public class LoginController {
+    @FXML
+    private Button loginBtn;
+
+    @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private Label passwordLabel;
+
+    @FXML
+    private Button signUpButton;
+
+    @FXML
+    private Label usernameLabel;
+
+    @FXML
+    private TextField usernameTextField;
 
 
     @FXML
     private GridPane rootpane;
     public void initialize() {
         rootpane.setBackground(new Background(
-                        createImage("https://edencoding.com/wp-content/uploads/2021/03/layer_06_1920x1080.png"),
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-        );
+                createImage(getClass().getResource("/images/Login.jpg").toString())
+        ));
 
 
         rootpane.setOpacity(0);
