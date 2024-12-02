@@ -1,15 +1,10 @@
 package service;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.prefs.Preferences;
 
 public class UserSession {
 
-    private static UserSession instance;
-
     private String userName;
-
     private String password;
     private String privileges;
 
@@ -17,27 +12,30 @@ public class UserSession {
         this.userName = userName;
         this.password = password;
         this.privileges = privileges;
+
         Preferences userPreferences = Preferences.userRoot();
-        userPreferences.put("USERNAME",userName);
-        userPreferences.put("PASSWORD",password);
-        userPreferences.put("PRIVILEGES",privileges);
+        userPreferences.put("USERNAME", userName);
+        userPreferences.put("PASSWORD", password);
+        userPreferences.put("PRIVILEGES", privileges);
     }
 
-
-
-    public static UserSession getInstace(String userName,String password, String privileges) {
-        if(instance == null) {
-            instance = new UserSession(userName, password, privileges);
-        }
-        return instance;
+    // Inner static class responsible for holding the Singleton instance
+    private static class UserSessionHolder {
+        private static final UserSession INSTANCE = new UserSession(
+                Preferences.userRoot().get("USERNAME", ""),
+                Preferences.userRoot().get("PASSWORD", ""),
+                Preferences.userRoot().get("PRIVILEGES", "NONE")
+        );
     }
 
-    public static UserSession getInstace(String userName,String password) {
-        if(instance == null) {
-            instance = new UserSession(userName, password, "NONE");
-        }
-        return instance;
+    public static UserSession getInstance(String userName, String password, String privileges) {
+        return new UserSession(userName, password, privileges);
     }
+
+    public static UserSession getInstance() {
+        return UserSessionHolder.INSTANCE;
+    }
+
     public String getUserName() {
         return this.userName;
     }
@@ -50,17 +48,18 @@ public class UserSession {
         return this.privileges;
     }
 
+    // Method to clean user session data
     public void cleanUserSession() {
-        this.userName = "";// or null
+        this.userName = ""; // Or null if you prefer
         this.password = "";
-        this.privileges = "";// or null
+        this.privileges = ""; // Or null if you prefer
     }
 
     @Override
     public String toString() {
         return "UserSession{" +
                 "userName='" + this.userName + '\'' +
-                ", privileges=" + this.privileges +
+                ", privileges='" + this.privileges + '\'' +
                 '}';
     }
 }

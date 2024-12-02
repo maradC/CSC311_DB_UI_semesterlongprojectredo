@@ -62,22 +62,22 @@
         <!-- Input Fields -->
         <VBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3">
             <children>
-                <TextField promptText="First Name" />
+                <TextField fx:id="firstName" promptText="First Name" />
             </children>
         </VBox>
-        <VBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
+        <VBox  alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
             <children>
-                <TextField promptText="Last Name" />
+                <TextField fx:id="lastName" promptText="Last Name" />
             </children>
         </VBox>
-        <VBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5">
+        <VBox  alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5">
             <children>
-                <TextField promptText="Email" />
+                <TextField fx:id="emailField" promptText="Email" />
             </children>
         </VBox>
-        <VBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="6">
+        <VBox  alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="6">
             <children>
-                <PasswordField promptText="Password" />
+                <PasswordField fx:id="passwordField" promptText="Password" />
             </children>
         </VBox>
 
