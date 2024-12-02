@@ -12,6 +12,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import service.UserSession;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class SignUpController {
 
@@ -52,10 +55,6 @@ public class SignUpController {
             showAlert(Alert.AlertType.ERROR, "Validation Error", "Please enter a valid email address.");
             return;
         }
-        if (!password.equals(confirmPassword)) {
-            showAlert(Alert.AlertType.ERROR, "Validation Error", "Passwords do not match.");
-            return;
-        }
 
         try {
             UserSession userSession = UserSession.getInstance(email, password, "USER");
@@ -79,6 +78,13 @@ public class SignUpController {
         passwordField.clear();
 
     }
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$"; // Simple regex for email validation
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
 
 
     private void showAlert (Alert.AlertType alertType, String validationError, String s){
