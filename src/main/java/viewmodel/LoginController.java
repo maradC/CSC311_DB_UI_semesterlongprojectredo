@@ -38,15 +38,12 @@ public class LoginController {
     @FXML
     private TextField usernameTextField;
 
-
     @FXML
     private GridPane rootpane;
     public void initialize() {
         rootpane.setBackground(new Background(
                 createImage(getClass().getResource("/images/Login.jpg").toString())
         ));
-
-
         rootpane.setOpacity(0);
         FadeTransition fadeOut2 = new FadeTransition(Duration.seconds(10), rootpane);
         fadeOut2.setFromValue(0);
@@ -62,6 +59,9 @@ public class LoginController {
     }
     @FXML
     public void login(ActionEvent actionEvent) {
+        String username = usernameTextField.getText();
+        String password = passwordField.getText();
+
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/view/db_interface_gui.fxml"));
             Scene scene = new Scene(root, 900, 600);
@@ -73,6 +73,7 @@ public class LoginController {
             e.printStackTrace();
         }
     }
+
 
     public void signUp(ActionEvent actionEvent) {
         try {

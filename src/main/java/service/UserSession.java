@@ -48,11 +48,10 @@ public class UserSession {
         return this.privileges;
     }
 
-    // Method to clean user session data
     public void cleanUserSession() {
-        this.userName = ""; // Or null if you prefer
+        this.userName = "";
         this.password = "";
-        this.privileges = ""; // Or null if you prefer
+        this.privileges = "";
     }
 
     @Override
