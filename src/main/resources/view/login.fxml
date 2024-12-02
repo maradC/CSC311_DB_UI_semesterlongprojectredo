@@ -5,8 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -39,7 +37,8 @@
                 <Insets />
             </GridPane.margin>
             <children>
-                <Label alignment="CENTER" prefHeight="114.0" prefWidth="1362.0" style="-fx-border-color: BLACK;" styleClass="login_title" text="Soccer Registration&#10;" textAlignment="CENTER" textFill="#111386" wrapText="true">
+                <Label alignment="CENTER" prefHeight="114.0" prefWidth="1362.0" style="-fx-border-color: BLACK;" styleClass="login_title" text="Athletics Registration&#10;" textAlignment="CENTER" textFill="#fdfcf0"
+                       wrapText="true">
                     <font>
                         <Font name="System Bold" size="51.0" />
                     </font>
@@ -65,12 +64,12 @@
         </VBox>
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4" />
-          <Label id="emailLabel" fx:id="usernameLabel" alignment="TOP_CENTER" contentDisplay="TOP" focusTraversable="false" prefHeight="23.0" prefWidth="156.0" styleClass="login_label" text="Username" textAlignment="RIGHT" GridPane.rowIndex="3">
+          <Label id="emailLabel" fx:id="usernameLabel" alignment="TOP_CENTER" contentDisplay="TOP" focusTraversable="false" prefHeight="23.0" prefWidth="156.0" styleClass="login_label" text="Username" textAlignment="RIGHT" textFill="WHITE" GridPane.rowIndex="3">
               <font>
                   <Font name="System Bold" size="18.0" />
               </font>
           </Label>
-          <Label id="passwordLabel" fx:id="passwordLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="23.0" prefWidth="154.0" styleClass="login_label" text="Password" textAlignment="RIGHT" GridPane.rowIndex="4">
+          <Label id="passwordLabel" fx:id="passwordLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="23.0" prefWidth="154.0" styleClass="login_label" text="Password" textAlignment="RIGHT" textFill="WHITE" GridPane.rowIndex="4">
               <font>
                   <Font name="System Bold" size="18.0" />
               </font>
