@@ -27,13 +27,12 @@ import model.Major;
 import model.Person;
 import service.MyLogger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -46,6 +45,16 @@ public class DB_GUI_Controller implements Initializable {
     public Button addBtn;
     public Button delBtn;
     public Button editBtn;
+
+    public MenuItem importCSV;
+    public MenuItem exportCSV;
+    public MenuItem GenReport;
+
+    public MenuItem editItemShortcut;
+    public MenuItem CopyItemShortcut;
+    public MenuItem deleteItemShortcut;
+    public MenuItem ClearItemShortcut;
+
 
     @FXML
     TextField first_name, last_name, department, email, imageURL;
@@ -107,34 +116,22 @@ public class DB_GUI_Controller implements Initializable {
 
     @FXML
     protected void addNewRecord() {
-        // Validate the form before proceeding
         boolean formValid = isFormValid();
-        System.out.println("Form Valid: " + formValid);  // Debug log to check validation
+        System.out.println("Form Valid: " + formValid);
 
         if (formValid) {
-            // Get the selected Major from the ComboBox
             Major selectedMajor = majorComboBox.getValue();
-
-            // Get data from TextFields and create a new Person object
             Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
                     selectedMajor, email.getText(), imageURL.getText());
 
-            // Add the new person to the data list
             data.add(p);
 
-            // Log the successful addition
             MyLogger.makeLog("New record added: " + p);
+            DbConnectivityClass.cnUtil.insertUser(p);
 
-            // Insert the new user into the database
-            DbConnectivityClass.cnUtil.insertUser(p); // This will insert the user and set the generated ID
-
-            // Clear the form after adding the record
             clearForm();
-
-            // Update the status message
             updateStatusMessage("User added successfully!");
         } else {
-            // If the form is invalid, update the status message or show an error
             updateStatusMessage("Please ensure all fields are filled in correctly.");
         }
     }
@@ -389,6 +386,109 @@ public class DB_GUI_Controller implements Initializable {
                     results.fname + " " + results.lname + " " + results.major);
         });
     }
+
+    public void exportCsv(ActionEvent actionEvent) {
+
+    }
+
+    @FXML
+    protected void importCsv() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import CSV File");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        // Open file chooser dialog
+        File file = fileChooser.showOpenDialog(menuBar.getScene().getWindow());
+
+        if (file != null) {
+            // Try to read and parse the CSV file
+            try {
+                ObservableList<Person> importedData = FXCollections.observableArrayList();
+
+                // Read the entire CSV file
+                List<String> lines = Files.readAllLines(file.toPath());
+
+                // Check if file is empty
+                if (lines.isEmpty()) {
+                    statusMessageLabel.setText("Error: The CSV file is empty.");
+                    return;
+                }
+
+                // Process each line in the CSV file
+                for (String line : lines) {
+                    // Skip empty lines
+                    if (line.trim().isEmpty()) continue;
+
+                    String[] values = line.split(","); // Assuming fields are comma-separated
+
+                    // Validate that there are exactly 6 fields
+                    if (values.length != 6) {
+                        statusMessageLabel.setText("Error: Invalid CSV format in line: " + line);
+                        return;
+                    }
+
+                    // Trim each value to avoid leading/trailing spaces
+                    for (int i = 0; i < values.length; i++) {
+                        values[i] = values[i].trim();
+                    }
+
+                    // Validate each value to ensure no blank fields
+                    if (Arrays.stream(values).anyMatch(String::isBlank)) {
+                        statusMessageLabel.setText("Error: Blank fields detected in line: " + line);
+                        return;
+                    }
+
+                    // Try to map the string value of the major to the Major enum
+                    Major major;
+                    try {
+                        major = Major.valueOf(values[3].toUpperCase());  // Assuming the 4th column is the major
+                    } catch (IllegalArgumentException e) {
+                        statusMessageLabel.setText("Error: Invalid Major value in line: " + line);
+                        return;
+                    }
+
+                    // Create a Person object from the CSV line
+                    Person person = new Person(values[0], values[1], values[2], major, values[4], values[5]);
+
+                    // Add the person to the importedData list
+                    importedData.add(person);
+                }
+
+                // Insert imported data into the database and update the table view
+                for (Person person : importedData) {
+                    cnUtil.insertUser(person);  // Insert the new record into the database
+                    cnUtil.retrieveId(person);  // Retrieve the ID after insertion
+                    person.setId(cnUtil.retrieveId(person));  // Set the ID to the Person object
+                }
+
+                // Add the imported data to the local observable list and table view
+                data.addAll(importedData);
+                tv.setItems(data);
+
+                // Update status message on successful import
+                statusMessageLabel.setText("CSV file imported successfully.");
+
+            } catch (IOException e) {
+                statusMessageLabel.setText("Error reading the CSV file.");
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // Handle invalid CSV format errors
+                statusMessageLabel.setText("Error importing CSV: " + e.getMessage());
+            } catch (Exception e) {
+                // Catch any other unexpected errors
+                statusMessageLabel.setText("An unexpected error occurred while importing the CSV file.");
+                e.printStackTrace();
+            }
+        } else {
+            // File chooser was canceled (no file selected)
+            statusMessageLabel.setText("Import canceled. No file selected.");
+        }
+    }
+
+
+    public void generateReport(ActionEvent actionEvent) {
+    }
+
 
     private static class Results {
 

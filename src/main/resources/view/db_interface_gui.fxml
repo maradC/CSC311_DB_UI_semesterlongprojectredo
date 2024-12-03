@@ -28,16 +28,19 @@
                             <items>
                                 <MenuItem fx:id="newItem" mnemonicParsing="false" onAction="#addRecord" styleClass="menu_items" text="New" />
                                 <MenuItem fx:id="ChangePic" mnemonicParsing="false" onAction="#showImage" styleClass="menu_items" text="Change Pic" />
+                                <MenuItem fx:id="importCSV" mnemonicParsing="false" styleClass="menu_items" text="Import CSV File"  onAction="#importCsv" />
+                                <MenuItem fx:id="exportCSV" mnemonicParsing="false" styleClass="menu_items" text="Export CSV File" onAction="#exportCsv" />
+                                <MenuItem fx:id="GenReport" mnemonicParsing="false" text="Generate Report" styleClass="menu_items" onAction="#generateReport"  />
                                 <MenuItem fx:id="logOut" mnemonicParsing="false" onAction="#logOut" styleClass="menu_items" text="Log out" />
                                 <MenuItem mnemonicParsing="false" onAction="#closeApplication" styleClass="menu_items" text="Exit Program" />
                             </items>
                         </Menu>
                   <Menu mnemonicParsing="false" styleClass="menu_options" text="Edit">
                      <items>
-                        <MenuItem fx:id="editItem" mnemonicParsing="true" styleClass="menu_items" text="_Edit       Ctrl+E" />
-                        <MenuItem fx:id="deleteItem" mnemonicParsing="true" styleClass="menu_items" text="_Delete        Ctrl+D" />
-                        <MenuItem fx:id="ClearItem" mnemonicParsing="false" styleClass="menu_items" text="Clea_r        Ctrl+R" />
-                        <MenuItem fx:id="CopyItem" mnemonicParsing="false" styleClass="menu_items" text="_Copy       Ctrl+C" />
+                        <MenuItem fx:id="editItemShortcut" mnemonicParsing="true" styleClass="menu_items" text="Edit" accelerator="Ctrl+E" />
+                        <MenuItem fx:id="deleteItemShortcut" mnemonicParsing="true" styleClass="menu_items" text="Delete"    accelerator="Ctrl+D" />
+                        <MenuItem fx:id="ClearItemShortcut" mnemonicParsing="false" styleClass="menu_items" text="Clear"     accelerator="Ctrl+R" />
+                        <MenuItem fx:id="CopyItemShortcut" mnemonicParsing="false" styleClass="menu_items" text="Copy "   accelerator="Ctrl+C" />
                      </items>
                   </Menu>
                         <Menu mnemonicParsing="false" styleClass="menu_options" text="Theme">
