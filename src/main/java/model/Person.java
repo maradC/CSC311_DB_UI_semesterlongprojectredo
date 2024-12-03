@@ -5,14 +5,14 @@ public class Person {
     private String firstName;
     private String lastName;
     private String department;
-    private String major;
+    private Major major;
     private String email;
     private String imageURL;
 
     public Person() {
     }
 
-    public Person(String firstName, String lastName, String department, String major, String email,  String imageURL) {
+    public Person(String firstName, String lastName, String department, Major major, String email,  String imageURL) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.department = department;
@@ -21,7 +21,7 @@ public class Person {
         this.imageURL = imageURL;
     }
 
-    public Person(Integer id, String firstName, String lastName, String department, String major, String email,  String imageURL) {
+    public Person(int id, String firstName, String lastName, String department, Major major, String email,  String imageURL) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -66,11 +66,11 @@ public class Person {
     }
 
 
-    public String getMajor() {
+    public Major getMajor() {
         return major;
     }
 
-    public void setMajor(String major) {
+    public void setMajor(Major major) {
         this.major = major;
     }
 

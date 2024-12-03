@@ -202,52 +202,46 @@ public class DB_GUI_Controller implements Initializable {
 
     @FXML
     protected void editRecord() {
-        Person selectedPerson = tv.getSelectionModel().getSelectedItem();
+        Person selectedPerson = getSelectedPerson();
 
-        if (selectedPerson == null) {
-            updateErrorStatusMessage("No user is selected for editing.");
-            return;
-        }
+        if (selectedPerson != null) {
+            selectedPerson.setFirstName(first_name.getText());
+            selectedPerson.setLastName(last_name.getText());
+            selectedPerson.setDepartment(department.getText());
+            selectedPerson.setMajor(majorComboBox.getValue());
+            selectedPerson.setEmail(email.getText());
+            selectedPerson.setImageURL(imageURL.getText());
 
-        String updatedFirstName = first_name.getText();
-        String updatedLastName = last_name.getText();
-        String updatedDepartment = department.getText();
-        Major updatedMajor = majorComboBox.getSelectionModel().getSelectedItem();  // Get selected Major from ComboBox
-        String updatedEmail = email.getText();
-        String updatedImageURL = imageURL.getText();
+            DbConnectivityClass.cnUtil.editUser(selectedPerson.getId(), selectedPerson);
 
-        Person updatedPerson = new Person(
-                selectedPerson.getId(),
-                updatedFirstName,
-                updatedLastName,
-                updatedDepartment,
-                updatedMajor,
-                updatedEmail,
-                updatedImageURL
-        );
 
-        try {
-            // Perform the update operation in the database
-            cnUtil.editUser(selectedPerson.getId(), updatedPerson);
-
-            // If no exception was thrown, assume update is successful
-            int index = tv.getSelectionModel().getSelectedIndex();
-            data.set(index, updatedPerson);  // Update the table data
-            tv.getSelectionModel().select(index);  // Keep the selection on the updated row
-
-            // Log the update operation
-            MyLogger.makeLog("User updated: " + updatedPerson.getFirstName() + " " + updatedPerson.getLastName());
-
-            // Show success message
-            updateStatusMessage("User updated successfully!");
+            refreshDataList();
 
             clearForm();
-        } catch (Exception e) {
-            // If an exception occurs, update the status message with an error
-            updateErrorStatusMessage("An error occurred while updating the user details.");
-            e.printStackTrace();
+
+            updateStatusMessage("User with ID " + selectedPerson.getId() + " updated successfully.");
+
+            MyLogger.makeLog("User with ID " + selectedPerson.getId() + " updated successfully.");
+        } else {
+            MyLogger.makeLog("No person selected for editing.");
+            updateStatusMessage("No user selected for editing.");
         }
     }
+
+    public Person getSelectedPerson() {
+        return tv.getSelectionModel().getSelectedItem();
+    }
+
+    public void refreshDataList() {
+        data.clear();
+
+        ObservableList<Person> updatedData = DbConnectivityClass.cnUtil.getData();
+
+        data.addAll(updatedData);
+        tv.refresh();
+    }
+
+
 
 
     private void updateStatusMessage(String message) {
