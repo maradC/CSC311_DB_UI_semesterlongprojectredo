@@ -4,6 +4,7 @@ import com.azure.storage.blob.BlobClient;
 import dao.DbConnectivityClass;
 import dao.StorageUploader;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -90,6 +91,15 @@ public class DB_GUI_Controller implements Initializable {
             // Disabling buttons when no item is selected
             editBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
             delBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
+            // Bind the Add button's disabled property to the form validation
+            addBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> !isFormValid(),
+                    first_name.textProperty(),
+                    last_name.textProperty(),
+                    department.textProperty(),
+                    email.textProperty(),
+                    imageURL.textProperty(),
+                    majorComboBox.valueProperty()));
+
         } catch (Exception e) {
             throw new RuntimeException("Error initializing the form", e);
         }
@@ -97,28 +107,38 @@ public class DB_GUI_Controller implements Initializable {
 
     @FXML
     protected void addNewRecord() {
-        // Get the selected Major from the ComboBox
-        Major selectedMajor = majorComboBox.getValue();
+        // Validate the form before proceeding
+        boolean formValid = isFormValid();
+        System.out.println("Form Valid: " + formValid);  // Debug log to check validation
 
-        // Get data from TextFields and create a new Person object
-        Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
-                selectedMajor, email.getText(), imageURL.getText());
+        if (formValid) {
+            // Get the selected Major from the ComboBox
+            Major selectedMajor = majorComboBox.getValue();
 
-        // Add the new person to the data list
-        data.add(p);
+            // Get data from TextFields and create a new Person object
+            Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
+                    selectedMajor, email.getText(), imageURL.getText());
 
-        // Log the successful addition
-        MyLogger.makeLog("New record added: " + p);
+            // Add the new person to the data list
+            data.add(p);
 
-        // Insert the new user into the database
-        DbConnectivityClass.cnUtil.insertUser(p); // This will insert the user and set the generated ID
+            // Log the successful addition
+            MyLogger.makeLog("New record added: " + p);
 
-        // Clear the form after adding the record
-        clearForm();
+            // Insert the new user into the database
+            DbConnectivityClass.cnUtil.insertUser(p); // This will insert the user and set the generated ID
 
-        // Update the status message
-        updateStatusMessage("User added successfully!");
+            // Clear the form after adding the record
+            clearForm();
+
+            // Update the status message
+            updateStatusMessage("User added successfully!");
+        } else {
+            // If the form is invalid, update the status message or show an error
+            updateStatusMessage("Please ensure all fields are filled in correctly.");
+        }
     }
+
 
     // Method to validate the form
     private boolean isFormValid() {
@@ -135,25 +155,20 @@ public class DB_GUI_Controller implements Initializable {
             return false;
         }
 
-        // Validate email (standard email format)
+        // Validate fdale email (standard email format)
         String emailAddress = email.getText();
-        if (!emailAddress.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        if (!emailAddress.matches("^[A-Za-z0-9+_.-]+@farmingdale\\.edu$")) {
             return false;
         }
 
-        // Validate department (non-empty, any characters allowed)
         String departmentField = department.getText();
         if (departmentField.isEmpty()) {
             return false;
         }
-
-        // Validate major (ensure it matches predefined values like Business, CSC, CPIS)
         Major majorField = majorComboBox.getValue();
         if (majorField == null) {
             return false;
         }
-
-        // If all checks pass, the form is valid
         return true;
     }
 
