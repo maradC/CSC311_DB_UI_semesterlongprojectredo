@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Major;
 import model.Person;
 import service.MyLogger;
 
@@ -33,6 +35,8 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DB_GUI_Controller implements Initializable {
     @FXML
@@ -43,7 +47,9 @@ public class DB_GUI_Controller implements Initializable {
     public Button editBtn;
 
     @FXML
-    TextField first_name, last_name, department, major, email, imageURL;
+    TextField first_name, last_name, department, email, imageURL;
+    @FXML
+    ComboBox<Major> majorComboBox;
     @FXML
     ImageView img_view;
     @FXML
@@ -74,33 +80,90 @@ public class DB_GUI_Controller implements Initializable {
             tv_major.setCellValueFactory(new PropertyValueFactory<>("major"));
             tv_email.setCellValueFactory(new PropertyValueFactory<>("email"));
             tv.setItems(data);
+
+            // Populate the ComboBox with Major enum values
+            majorComboBox.setItems(FXCollections.observableArrayList(Major.values()));
+
+            // Optionally, you can set a default value for the ComboBox
+            majorComboBox.getSelectionModel().selectFirst();
+
+            // Disabling buttons when no item is selected
+            editBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
+            delBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error initializing the form", e);
         }
-        editBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
-        delBtn.disableProperty().bind(tv.getSelectionModel().selectedItemProperty().isNull());
-
-
     }
 
     @FXML
     protected void addNewRecord() {
-            Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
-                    major.getText(), email.getText(), imageURL.getText());
-            cnUtil.insertUser(p);
-            cnUtil.retrieveId(p);
-            p.setId(cnUtil.retrieveId(p));
-            data.add(p);
-            clearForm();
+        // Get the selected Major from the ComboBox
+        Major selectedMajor = majorComboBox.getValue();
 
+        // Get data from TextFields and create a new Person object
+        Person p = new Person(first_name.getText(), last_name.getText(), department.getText(),
+                selectedMajor, email.getText(), imageURL.getText());
+
+        // Add the new person to the data list
+        data.add(p);
+
+        // Log the successful addition
+        MyLogger.makeLog("New record added: " + p);
+
+        // Insert the new user into the database
+        DbConnectivityClass.cnUtil.insertUser(p); // This will insert the user and set the generated ID
+
+        // Clear the form after adding the record
+        clearForm();
+
+        // Update the status message
+        updateStatusMessage("User added successfully!");
     }
+
+    // Method to validate the form
+    private boolean isFormValid() {
+
+        // Validate first name (only letters, and hyphen allowed)
+        String firstName = first_name.getText();
+        if (!firstName.matches("^[A-Za-z]+(-[A-Za-z]+)*$")) {
+            return false;
+        }
+
+        // Validate last name (only letters, and hyphen allowed)
+        String lastName = last_name.getText();
+        if (!lastName.matches("^[A-Za-z]+(-[A-Za-z]+)*$")) {
+            return false;
+        }
+
+        // Validate email (standard email format)
+        String emailAddress = email.getText();
+        if (!emailAddress.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            return false;
+        }
+
+        // Validate department (non-empty, any characters allowed)
+        String departmentField = department.getText();
+        if (departmentField.isEmpty()) {
+            return false;
+        }
+
+        // Validate major (ensure it matches predefined values like Business, CSC, CPIS)
+        Major majorField = majorComboBox.getValue();
+        if (majorField == null) {
+            return false;
+        }
+
+        // If all checks pass, the form is valid
+        return true;
+    }
+
 
     @FXML
     protected void clearForm() {
         first_name.setText("");
         last_name.setText("");
         department.setText("");
-        major.setText("");
+        majorComboBox.getSelectionModel().clearSelection();
         email.setText("");
         imageURL.setText("");
     }
@@ -149,7 +212,7 @@ public class DB_GUI_Controller implements Initializable {
         String updatedFirstName = first_name.getText();
         String updatedLastName = last_name.getText();
         String updatedDepartment = department.getText();
-        String updatedMajor = major.getText();
+        Major updatedMajor = majorComboBox.getSelectionModel().getSelectedItem();  // Get selected Major from ComboBox
         String updatedEmail = email.getText();
         String updatedImageURL = imageURL.getText();
 
@@ -258,7 +321,7 @@ public class DB_GUI_Controller implements Initializable {
         first_name.setText(p.getFirstName());
         last_name.setText(p.getLastName());
         department.setText(p.getDepartment());
-        major.setText(p.getMajor());
+        majorComboBox.getSelectionModel().select(p.getMajor());
         email.setText(p.getEmail());
         imageURL.setText(p.getImageURL());
     }
@@ -317,8 +380,6 @@ public class DB_GUI_Controller implements Initializable {
                     results.fname + " " + results.lname + " " + results.major);
         });
     }
-
-    private static enum Major {Business, CSC, CPIS}
 
     private static class Results {
 

@@ -2,6 +2,7 @@ package dao;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.Major;
 import model.Person;
 import service.MyLogger;
 
@@ -28,29 +29,41 @@ public class DbConnectivityClass {
         connectToDatabase();
         try {
             Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String sql = "SELECT * FROM users ";
+            String sql = "SELECT * FROM users";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
+
             if (!resultSet.isBeforeFirst()) {
                 lg.makeLog("No data");
             }
+
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String first_name = resultSet.getString("first_name");
                 String last_name = resultSet.getString("last_name");
                 String department = resultSet.getString("department");
-                String major = resultSet.getString("major");
+
+                // Use fromString() to handle special cases
+                String majorString = resultSet.getString("major");
+                Major major = Major.fromString(majorString);  // Use the fromString method to handle special cases
+
                 String email = resultSet.getString("email");
                 String imageURL = resultSet.getString("imageURL");
+
+                // Create and add new Person object to the list
                 data.add(new Person(id, first_name, last_name, department, major, email, imageURL));
             }
+
             preparedStatement.close();
             conn.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return data;
     }
+
 
     public boolean connectToDatabase() {
         boolean hasRegistredUsers = false;
@@ -146,48 +159,87 @@ public class DbConnectivityClass {
     }
 
     public void insertUser(Person person) {
-        connectToDatabase();
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String sql = "INSERT INTO users (first_name, last_name, department, major, email, imageURL) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        String sql = "INSERT INTO users (first_name, last_name, department, major, email, imageURL) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            // Prepare the statement and specify we want the generated keys (AUTO_INCREMENT id)
+            PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            // Set the values in the PreparedStatement
             preparedStatement.setString(1, person.getFirstName());
             preparedStatement.setString(2, person.getLastName());
             preparedStatement.setString(3, person.getDepartment());
-            preparedStatement.setString(4, person.getMajor());
+            preparedStatement.setString(4, person.getMajor().toString());  // Store the Major enum as a string
             preparedStatement.setString(5, person.getEmail());
             preparedStatement.setString(6, person.getImageURL());
-            int row = preparedStatement.executeUpdate();
-            if (row > 0) {
-                lg.makeLog("A new user was inserted successfully.");
+
+            // Execute the query
+            int affectedRows = preparedStatement.executeUpdate();
+
+            // Check if we have any generated keys (the auto-incremented id)
+            if (affectedRows > 0) {
+                // Get the generated keys (i.e., the auto-incremented id)
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int generatedId = generatedKeys.getInt(1); // Get the ID from the first column
+                    person.setId(generatedId);  // Set the generated ID on the Person object
+
+                    // Log the generated ID for debugging purposes
+                    System.out.println("Generated ID: " + generatedId);
+                }
             }
-            preparedStatement.close();
-            conn.close();
+
+            // Log the successful insertion of the new user
+            MyLogger.makeLog("A new user was inserted successfully with ID: " + person.getId());
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+
     public void editUser(int id, Person p) {
-        connectToDatabase();
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String sql = "UPDATE users SET first_name=?, last_name=?, department=?, major=?, email=?, imageURL=? WHERE id=?";
+        // Ensure you have a valid ID
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        // SQL query for updating user data
+        String sql = "UPDATE users SET first_name=?, last_name=?, department=?, major=?, email=?, imageURL=? WHERE id=?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            // Set the new values to the prepared statement
             preparedStatement.setString(1, p.getFirstName());
             preparedStatement.setString(2, p.getLastName());
             preparedStatement.setString(3, p.getDepartment());
-            preparedStatement.setString(4, p.getMajor());
+            preparedStatement.setString(4, p.getMajor().toString());  // Update Major as string
             preparedStatement.setString(5, p.getEmail());
             preparedStatement.setString(6, p.getImageURL());
-            preparedStatement.setInt(7, id);
-            preparedStatement.executeUpdate();
+            preparedStatement.setInt(7, id);  // Ensure the correct ID is passed in
+
+            // Execute the update query
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                // Successfully updated the user
+                System.out.println("User updated successfully with ID: " + id);
+                MyLogger.makeLog("User updated successfully with ID: " + id);
+            } else {
+                System.out.println("No user found with ID: " + id);
+                MyLogger.makeLog("No user found with ID: " + id);
+            }
+
             preparedStatement.close();
             conn.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            MyLogger.makeLog("Error updating user: " + e.getMessage());
         }
     }
+
 
     public void deleteRecord(Person person) {
         int id = person.getId();

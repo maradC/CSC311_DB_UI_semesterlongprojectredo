@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ComboBox?>
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="920.0" styleClass="anchor_pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewmodel.DB_GUI_Controller">
     <children>
         <BorderPane fx:id="borderPane" layoutX="-2.0" layoutY="-3.0" prefHeight="597.0" prefWidth="908.0">
@@ -95,11 +96,11 @@
                                 <Insets left="10.0" right="10.0" top="5.0" />
                             </VBox.margin>
                         </TextField>
-                        <TextField fx:id="major" promptText="Major" styleClass="text_field">
+                        <ComboBox fx:id="majorComboBox" promptText="Major" styleClass="combo_box">
                             <VBox.margin>
                                 <Insets left="10.0" right="10.0" top="5.0" />
                             </VBox.margin>
-                        </TextField>
+                        </ComboBox>
                         <TextField fx:id="email" promptText="Email" styleClass="text_field">
                             <VBox.margin>
                                 <Insets left="10.0" right="10.0" top="5.0" />
@@ -145,7 +146,7 @@
                         <TableColumn fx:id="tv_fn" prefWidth="117.0" styleClass="table_columns" text="First Name" />
                         <TableColumn fx:id="tv_ln" prefWidth="93.0" styleClass="table_columns" text="Last Name" />
                         <TableColumn fx:id="tv_department" prefWidth="122.0" styleClass="table_columns" text="Department" />
-                        <TableColumn fx:id="tv_major" prefWidth="84.0" styleClass="table_columns" text="Major" />
+                        <TableColumn fx:id="tv_major" prefWidth="84.0" styleClass="table_columns" text="Major" editable="true"/>
                         <TableColumn fx:id="tv_email" prefWidth="111.0" styleClass="table_columns" text="Email" />
                     </columns>
                 </TableView>
