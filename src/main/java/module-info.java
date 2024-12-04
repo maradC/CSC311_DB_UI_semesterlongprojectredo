@@ -5,6 +5,8 @@ module com.example.csc311_db_ui_semesterlongproject {
     requires java.prefs;
     requires com.azure.storage.blob;
     requires org.apache.pdfbox;
+    requires kernel;
+    requires layout; // Assuming you are using PDFBox for other PDF-related functionality
 
 
     opens viewmodel;

@@ -43,6 +43,18 @@
     -fx-font-size: 15 pt;
         -fx-text-fill: white;
 }
+/*Added the hover effect for when cursor is above the selected item in the menu bar
+
+ */
+.menu-item:hover {
+    -fx-background-color: #333333;
+    fx-text-fill: white;
+}
+
+
+.menu_bar .label:hover {
+    -fx-text-fill: #00a2ff;
+}
 
 .menu_options .label{
     -fx-background-color: black;

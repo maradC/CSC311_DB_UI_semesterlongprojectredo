@@ -1,6 +1,12 @@
 package viewmodel;
 
 import com.azure.storage.blob.BlobClient;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+
 import dao.DbConnectivityClass;
 import dao.StorageUploader;
 import javafx.application.Platform;
@@ -31,10 +37,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -387,107 +390,164 @@ public class DB_GUI_Controller implements Initializable {
         });
     }
 
-    public void exportCsv(ActionEvent actionEvent) {
+    @FXML
+    protected void exportCsv(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fileChooser.setTitle("Save CSV File");
+        File file = fileChooser.showSaveDialog(menuBar.getScene().getWindow());
 
+        if (file != null) {
+            try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
+                writer.write("First Name,Last Name,Department,Major,Email,Image URL\n");
+
+                for (Person person : data) {
+                    writer.write(String.join(",",
+                            person.getFirstName(),
+                            person.getLastName(),
+                            person.getDepartment(),
+                            person.getMajor().name(),
+                            person.getEmail(),
+                            person.getImageURL())
+                    );
+                    writer.newLine();
+                }
+                updateStatusMessage("Successfully exported CSV file.");
+
+            } catch (IOException e) {
+                updateErrorStatusMessage("Error exporting CSV file.");
+                e.printStackTrace();
+            }
+        }
     }
-
     @FXML
     protected void importCsv() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import CSV File");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 
-        // Open file chooser dialog
         File file = fileChooser.showOpenDialog(menuBar.getScene().getWindow());
 
         if (file != null) {
-            // Try to read and parse the CSV file
             try {
                 ObservableList<Person> importedData = FXCollections.observableArrayList();
-
-                // Read the entire CSV file
                 List<String> lines = Files.readAllLines(file.toPath());
 
-                // Check if file is empty
                 if (lines.isEmpty()) {
-                    statusMessageLabel.setText("Error: The CSV file is empty.");
+                    updateErrorStatusMessage("Error: The CSV file is empty.");
                     return;
                 }
 
-                // Process each line in the CSV file
                 for (String line : lines) {
-                    // Skip empty lines
                     if (line.trim().isEmpty()) continue;
 
-                    String[] values = line.split(","); // Assuming fields are comma-separated
-
-                    // Validate that there are exactly 6 fields
+                    String[] values = line.split(",");
                     if (values.length != 6) {
-                        statusMessageLabel.setText("Error: Invalid CSV format in line: " + line);
+                        updateErrorStatusMessage("Error: Invalid CSV format in line: " + line);
                         return;
                     }
 
-                    // Trim each value to avoid leading/trailing spaces
                     for (int i = 0; i < values.length; i++) {
                         values[i] = values[i].trim();
                     }
 
-                    // Validate each value to ensure no blank fields
                     if (Arrays.stream(values).anyMatch(String::isBlank)) {
-                        statusMessageLabel.setText("Error: Blank fields detected in line: " + line);
+                        updateErrorStatusMessage("Error: Blank fields detected in line: " + line);
                         return;
                     }
 
-                    // Try to map the string value of the major to the Major enum
                     Major major;
                     try {
-                        major = Major.valueOf(values[3].toUpperCase());  // Assuming the 4th column is the major
+                        major = Major.valueOf(values[3].toUpperCase());
                     } catch (IllegalArgumentException e) {
-                        statusMessageLabel.setText("Error: Invalid Major value in line: " + line);
+                        updateErrorStatusMessage("Error: Invalid Major value in line: " + line);
                         return;
                     }
 
-                    // Create a Person object from the CSV line
                     Person person = new Person(values[0], values[1], values[2], major, values[4], values[5]);
-
-                    // Add the person to the importedData list
                     importedData.add(person);
                 }
 
-                // Insert imported data into the database and update the table view
                 for (Person person : importedData) {
-                    cnUtil.insertUser(person);  // Insert the new record into the database
-                    cnUtil.retrieveId(person);  // Retrieve the ID after insertion
-                    person.setId(cnUtil.retrieveId(person));  // Set the ID to the Person object
+                    cnUtil.insertUser(person);
+                    cnUtil.retrieveId(person);
+                    person.setId(cnUtil.retrieveId(person));
                 }
 
-                // Add the imported data to the local observable list and table view
                 data.addAll(importedData);
                 tv.setItems(data);
 
-                // Update status message on successful import
-                statusMessageLabel.setText("CSV file imported successfully.");
+                updateStatusMessage("CSV file imported successfully.");
 
             } catch (IOException e) {
-                statusMessageLabel.setText("Error reading the CSV file.");
+                updateErrorStatusMessage("Error reading the CSV file.");
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
-                // Handle invalid CSV format errors
-                statusMessageLabel.setText("Error importing CSV: " + e.getMessage());
+                updateErrorStatusMessage("Error importing CSV: " + e.getMessage());
             } catch (Exception e) {
-                // Catch any other unexpected errors
-                statusMessageLabel.setText("An unexpected error occurred while importing the CSV file.");
+                updateErrorStatusMessage("An unexpected error occurred while importing the CSV file.");
                 e.printStackTrace();
             }
         } else {
-            // File chooser was canceled (no file selected)
-            statusMessageLabel.setText("Import canceled. No file selected.");
+            updateErrorStatusMessage("Import canceled. No file selected.");
         }
     }
 
+    @FXML
+    protected void generateReport() {
+        // Step 1: Calculate number of students by major
+        Map<Major, Integer> studentsByMajor = new HashMap<>();
 
-    public void generateReport(ActionEvent actionEvent) {
+        for (Person person : data) {
+            Major major = person.getMajor();
+            studentsByMajor.put(major, studentsByMajor.getOrDefault(major, 0) + 1);
+        }
+
+        // Step 2: Create the PDF file
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        fileChooser.setTitle("Save PDF Report");
+
+        File file = fileChooser.showSaveDialog(menuBar.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                PdfWriter writer = new PdfWriter(file);
+                PdfDocument pdf = new PdfDocument(writer);
+
+                // Create a document to add content to the PDF
+                Document document = new Document(pdf);
+
+                // Title of the report
+                document.add(new Paragraph("Student Report by Major").setBold().setFontSize(18));
+
+                // Create a table for the major and student count
+                Table table = new Table(2); // 2 columns: Major and Number of Students
+                table.addHeaderCell("Major");
+                table.addHeaderCell("Number of Students");
+
+                // Fill the table with major data
+                for (Map.Entry<Major, Integer> entry : studentsByMajor.entrySet()) {
+                    table.addCell(entry.getKey().name()); // Major name
+                    table.addCell(entry.getValue().toString()); // Number of students
+                }
+
+                // Add the table to the document
+                document.add(table);
+
+                // Close the document (finalize the PDF)
+                document.close();
+
+                updateStatusMessage("PDF report generated successfully.");
+            } catch (IOException e) {
+                updateErrorStatusMessage("Error generating PDF report.");
+                e.printStackTrace();
+            }
+        } else {
+            updateErrorStatusMessage("Report generation canceled. No file selected.");
+        }
     }
+
 
 
     private static class Results {
