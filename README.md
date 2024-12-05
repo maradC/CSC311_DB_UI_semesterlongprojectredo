@@ -31,7 +31,7 @@ A JavaFX Madrid Academy made in CSC311
 
 ## Features
 
-- Able to create an account using your  credentials to login.
+Able to create an account using your  credentials to login.
 
 -Insert users in to the database only if all fields are properly filled out.
 
@@ -41,6 +41,6 @@ A JavaFX Madrid Academy made in CSC311
 ## Tech-Stack
 Frontend: JavaFX
 
-Backend: Azure 
+Backend: Azure Database
 
 
