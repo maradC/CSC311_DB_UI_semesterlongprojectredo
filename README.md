@@ -2,8 +2,14 @@
 
 A JavaFX Madrid Academy made in CSC311
 
-<iframe width="640" height="401" src="https://www.loom.com/embed/9bee966add8346f6bf01cf02fe09169c?sid=1a4294b0-37cb-45a0-92df-f37d0ba3ddd8" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
+<div>
+    <a href="https://www.loom.com/share/9ecca6f733044844abb6562a2e75c82b">
+      <p>csc311 - Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/9ecca6f733044844abb6562a2e75c82b">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/9ecca6f733044844abb6562a2e75c82b-4aa147ad3a99a140-full-play.gif">
+    </a>
+  </div>
 
 <details>
   <summary>Table of Contents</summary>
