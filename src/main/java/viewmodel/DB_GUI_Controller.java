@@ -21,7 +21,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,7 +35,6 @@ import service.MyLogger;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +55,6 @@ public class DB_GUI_Controller implements Initializable {
     public MenuItem CopyItemShortcut;
     public MenuItem deleteItemShortcut;
     public MenuItem ClearItemShortcut;
-
 
     @FXML
     TextField first_name, last_name, department, email, imageURL;
@@ -140,22 +137,22 @@ public class DB_GUI_Controller implements Initializable {
     }
 
 
-    // Method to validate the form
+    // Method to validate the form to allow successful entry
     private boolean isFormValid() {
 
-        // Validate first name (only letters, and hyphen allowed)
+        // Validate first name
         String firstName = first_name.getText();
         if (!firstName.matches("^[A-Za-z]+(-[A-Za-z]+)*$")) {
             return false;
         }
 
-        // Validate last name (only letters, and hyphen allowed)
+        // Validate last name
         String lastName = last_name.getText();
         if (!lastName.matches("^[A-Za-z]+(-[A-Za-z]+)*$")) {
             return false;
         }
 
-        // Validate fdale email (standard email format)
+        // Validate fdale email
         String emailAddress = email.getText();
         if (!emailAddress.matches("^[A-Za-z0-9+_.-]+@farmingdale\\.edu$")) {
             return false;
@@ -260,22 +257,14 @@ public class DB_GUI_Controller implements Initializable {
 
 
     private void updateStatusMessage(String message) {
-        statusMessageLabel.setText(message);  // Set the message to the statusMessageLabel
-        statusMessageLabel.setStyle("-fx-text-fill: green;");  // Optional: set text color to green for success
+        statusMessageLabel.setText(message);
+        statusMessageLabel.setStyle("-fx-text-fill: green;");
     }
     private void updateErrorStatusMessage(String message) {
-        statusMessageLabel.setText(message);  // Set the message to the statusMessageLabel
-        statusMessageLabel.setStyle("-fx-text-fill: red;");  // Set text color to red for errors
+        statusMessageLabel.setText(message);
+        statusMessageLabel.setStyle("-fx-text-fill: red;");
     }
 
-
-
-    private void showAlert(Alert.AlertType alertType, String noSelection, String s) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(noSelection);
-        alert.setContentText(s);
-        alert.showAndWait();
-    }
 
     @FXML
     protected void deleteRecord() {
@@ -391,7 +380,7 @@ public class DB_GUI_Controller implements Initializable {
     }
 
     @FXML
-    protected void exportCsv(ActionEvent actionEvent) {
+    protected void exportCsv() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         fileChooser.setTitle("Save CSV File");
@@ -437,7 +426,6 @@ public class DB_GUI_Controller implements Initializable {
                     updateErrorStatusMessage("Error: The CSV file is empty.");
                     return;
                 }
-
                 for (String line : lines) {
                     if (line.trim().isEmpty()) continue;
 
@@ -515,27 +503,19 @@ public class DB_GUI_Controller implements Initializable {
                 PdfWriter writer = new PdfWriter(file);
                 PdfDocument pdf = new PdfDocument(writer);
 
-                // Create a document to add content to the PDF
                 Document document = new Document(pdf);
-
-                // Title of the report
                 document.add(new Paragraph("Student Report by Major").setBold().setFontSize(18));
 
-                // Create a table for the major and student count
-                Table table = new Table(2); // 2 columns: Major and Number of Students
+                Table table = new Table(2);
                 table.addHeaderCell("Major");
                 table.addHeaderCell("Number of Students");
 
-                // Fill the table with major data
                 for (Map.Entry<Major, Integer> entry : studentsByMajor.entrySet()) {
-                    table.addCell(entry.getKey().name()); // Major name
-                    table.addCell(entry.getValue().toString()); // Number of students
+                    table.addCell(entry.getKey().name());
+                    table.addCell(entry.getValue().toString());
                 }
 
-                // Add the table to the document
                 document.add(table);
-
-                // Close the document (finalize the PDF)
                 document.close();
 
                 updateStatusMessage("PDF report generated successfully.");
