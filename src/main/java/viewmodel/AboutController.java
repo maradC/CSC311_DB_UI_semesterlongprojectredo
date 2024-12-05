@@ -27,9 +27,7 @@ public class AboutController {
 
     @FXML
     private void initialize() {
-        // Disable window resizing by getting the stage and setting resizable to false
-        Stage stage = (Stage) anchorPane.getScene().getWindow();
-        stage.setResizable(false);
+
     }
 
 

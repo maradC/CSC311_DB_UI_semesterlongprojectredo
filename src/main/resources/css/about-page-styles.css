@@ -25,3 +25,90 @@
     -fx-text-fill: #7f8c8d;
     -fx-opacity: 0.8;
 }
+/* Global Styling */
+.root {
+    -fx-background-color: #f4f4f4;
+    -fx-font-family: 'Arial', sans-serif;
+}
+
+/* Anchor Pane */
+.anchor-pane {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
+}
+
+/* Help Center Title */
+.help-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 20 0;
+}
+
+/* Accordion Styling */
+.accordion {
+    -fx-background-color: transparent;
+}
+
+.accordion .titled-pane {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-padding: 10px;
+    -fx-margin: 5px 0;
+}
+
+.accordion .titled-pane > .title {
+    -fx-background-color: #e7f1ff;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #2980b9;
+    -fx-font-weight: bold;
+}
+
+.accordion .titled-pane:expanded > .title {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: #ffffff;
+}
+
+/* Text Areas */
+.text-area {
+    -fx-background-color: #f9f9f9;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 6px;
+}
+
+.text-area .content {
+    -fx-background-color: #f9f9f9;
+}
+
+/* Combo Box */
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 6px;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 15px;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: #2c3e50;
+}
+
+.contact-label {
+    -fx-font-size: 14px;
+    -fx-padding: 5px 0;
+}

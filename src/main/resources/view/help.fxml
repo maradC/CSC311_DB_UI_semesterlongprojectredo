@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            stylesheets="@../css/about-page-styles.css"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="viewmodel.HelpController"
+            prefHeight="600.0"
+            prefWidth="800.0"
+            styleClass="anchor-pane">
+
+    <VBox spacing="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
+        <Label text="Help Center" styleClass="help-title"/>
+
+        <Accordion>
+            <panes>
+                <TitledPane text="Report an Issue">
+                    <VBox spacing="10">
+                        <Label text="Reporting Problems or Concerns" style="-fx-font-weight: bold;"/>
+                        <TextArea text="To report an issue:&#10;1. Select issue category&#10;2. Provide detailed description&#10;3. Attach supporting documents if applicable&#10;4. Submit and track your issue&#10;&#10;Issue Categories:&#10;- Registration Problems&#10;- Account Access&#10;- Technical Difficulties&#10;- General Inquiries"
+                                  wrapText="true"
+                                  editable="false"/>
+                        <ComboBox fx:id="issueCategoryComboBox" promptText="Select Issue Category"/>
+                        <TextArea fx:id="issueDescriptionTextArea" promptText="Describe your issue in detail" wrapText="true"/>
+                        <Button text="Submit Issue" />
+                    </VBox>
+                </TitledPane>
+
+                <TitledPane text="Contact Support">
+                    <VBox spacing="10">
+                        <Label text="Get Additional Help" style="-fx-font-weight: bold;"/>
+                        <Label text="Email: support@google.com" styleClass="contact-label"/>
+                        <Label text="Phone: 1-800-8888" styleClass="contact-label"/>
+                        <Label text="Support Hours: Mon-Fri, 9 AM - 5 PM" styleClass="contact-label"/>
+                    </VBox>
+                </TitledPane>
+            </panes>
+        </Accordion>
+    </VBox>
+</AnchorPane>

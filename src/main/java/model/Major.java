@@ -1,9 +1,15 @@
 package model;
 
 public enum Major {
+
     SCIENCE_AND_TECHNOLOGY("Science & Technology"),
     CPIS("CPIS"),
-    BUSINESS("Business");
+    BUSINESS("Business"),
+    NURSING("Nursing"),
+    ART("Art "),
+    BIOLOGY("Biology"),
+    MECHANICAL_ENGINEERING( "Engineering"),
+    ENVIRONMENTAL_SCIENCE("Environmental Science");
 
     private final String displayName;
 
@@ -21,7 +27,7 @@ public enum Major {
                 return m;
             }
         }
-        return null; // or throw an exception if necessary
+        return null;
     }
 
     @Override
