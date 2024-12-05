@@ -67,7 +67,6 @@ public class LoginController {
         String savedUsername = prefs.get("USERNAME", "");
         String savedPassword = prefs.get("PASSWORD", "");
 
-        // Validate the login credentials
         if (validateCredentials(username, password, savedUsername, savedPassword)) {
             showAlert(Alert.AlertType.INFORMATION, "Login Success", "You have logged in successfully!");
 
