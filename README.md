@@ -2,7 +2,9 @@
 
 A JavaFX Madrid Academy made in CSC311
 
-![Features](<iframe width="640" height="401" src="https://www.loom.com/embed/9bee966add8346f6bf01cf02fe09169c?sid=eb6d47e6-025a-42af-a40f-2decb92c5470" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>)
+![Features](github - Watch Video
+
+)
 
 <details>
   <summary>Table of Contents</summary>
@@ -23,6 +25,7 @@ A JavaFX Madrid Academy made in CSC311
 
 
 ## Features
+
 - Able to create an account using your  credentials to login.
 
 -Insert users in to the database only if all fields are properly filled out.
